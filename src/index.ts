@@ -9,14 +9,14 @@ import {
 } from "eov-handler-adapter";
 import { DefaultApi } from "./genereted/api/defaultApi.js";
 import { OpenAPIV3 } from "express-openapi-validator/dist/framework/types.js";
-import { RouteMetadata } from "express-openapi-validator/dist/framework/openapi.spec.loader.js";
-import { Fruit, Fruits } from "./genereted/model/fruit.js";
+import { Fruits } from "./genereted/model/fruit.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import yaml from "js-yaml";
 import fs from "fs";
 import { BirthExternal } from "./genereted/model/birthExternal.js";
 import cookieParser from "cookie-parser";
+import { resolver } from "./resolver.js";
 
 // load an API spec
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -114,16 +114,7 @@ const handlers: Record<string, Controller> = {
   parameters: adapter.connect(parametersHandler),
 };
 
-type HttpMethod =
-  | "get"
-  | "put"
-  | "post"
-  | "delete"
-  | "options"
-  | "head"
-  | "patch"
-  | "trace";
-
+// set up express
 const app = express();
 app.use(express.raw());
 app.use(express.json());
@@ -133,29 +124,7 @@ app.use(
     apiSpec: API_SPEC_PATH,
     operationHandlers: {
       basePath: "",
-      resolver: (
-        _: string,
-        route: RouteMetadata,
-        apiDoc: OpenAPIV3.Document
-      ) => {
-        const pathKey = route.openApiRoute.slice(route.basePath.length);
-        const schema =
-          apiDoc.paths[pathKey][route.method.toLowerCase() as HttpMethod];
-        if (!schema) {
-          throw new Error(`No schema found for ${route.method} ${pathKey}`);
-        }
-        const operationId = schema.operationId;
-        if (!operationId) {
-          throw new Error(
-            `operationId is not defined on ${route.method} ${pathKey}`
-          );
-        }
-        const handle = handlers[operationId];
-        if (!handle) {
-          throw new Error(`Handler is not registered for ${operationId}`);
-        }
-        return handle;
-      },
+      resolver: resolver(handlers),
     },
     serDes: [
       OpenApiValidator.serdes.dateTime.deserializer,
@@ -166,7 +135,7 @@ app.use(
       dest: "uploads",
     },
     $refParser: {
-      mode: "dereference",
+      mode: "dereference", // important!
     },
   })
 );
