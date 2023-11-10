@@ -1,0 +1,1 @@
+curl -X POST localhost:3000/multi_file --form "file=@./sample.txt" --form "files=@./sample.txt" --form "files=@./sample.jpg"

@@ -1,0 +1,1 @@
+curl -X POST localhost:3000/with_refs -H "Content-Type: application/json" -d "{\"name\": \"Taro\", \"age\": 20, \"gender\": \"male\"}"

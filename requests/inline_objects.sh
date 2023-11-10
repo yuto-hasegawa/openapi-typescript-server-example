@@ -1,0 +1,1 @@
+curl -X POST localhost:3000/inline_objects -H "Content-Type: application/json" -d "{\"id\": \"abc\"}"

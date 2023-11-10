@@ -1,0 +1,10 @@
+type: object
+properties:
+  birthday:
+    type: string
+    format: date
+  born_at:
+    type: string
+    format: date-time
+  birth_month:
+    $ref: "./year_month.yaml"

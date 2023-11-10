@@ -1,0 +1,194 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Example API
+paths:
+  /hello:
+    get:
+      operationId: hello
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+          required: true
+        - name: expiresAt
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: string response
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /dates:
+    get:
+      operationId: dates
+      parameters:
+        - name: birthday
+          in: query
+          schema:
+            type: string
+            format: date
+          required: true
+        - name: bornAt
+          in: query
+          schema:
+            type: string
+            format: date-time
+          required: true
+      responses:
+        "201":
+          description: empty response
+
+  /single_file:
+    post:
+      operationId: singleFile
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "201":
+          description: empty response
+
+  /multi_file:
+    post:
+      operationId: multiFile
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required:
+                - file
+                - files
+      responses:
+        "201":
+          description: empty response
+
+  /with_refs:
+    post:
+      operationId: withRefs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Profile"
+      responses:
+        "200":
+          description: birth object from external file
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/birth_external.yaml"
+
+  /enums:
+    get:
+      operationId: enums
+      responses:
+        "200":
+          description: enum response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "./schema/fruit.yaml"
+
+  /inline_objects:
+    post:
+      operationId: inlineObjects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+      responses:
+        "200":
+          description: inline object response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  age:
+                    type: integer
+                    format: int32
+
+  /parameters/{id}:
+    get:
+      summary: parameters in various places
+      operationId: parameters
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            format: int32
+          required: false
+        - name: q
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: X-Request-ID
+          in: header
+          schema:
+            type: string
+          required: false
+        - name: sessionId
+          in: cookie
+          schema:
+            type: string
+          required: false
+      responses:
+        "201":
+          description: Null response
+
+components:
+  schemas:
+    Profile:
+      type: object
+      properties:
+        name:
+          type: string
+        age:
+          type: integer
+          format: int32
+        gender:
+          type: string
+      required:
+        - name
+        - age

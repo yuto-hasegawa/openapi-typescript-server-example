@@ -1,0 +1,29 @@
+{
+  "name": "openapi-typescript-server-example",
+  "version": "1.0.0",
+  "description": "A minimum example of a typescript server powered by openapi",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "ts-node --esm src/index.ts",
+    "generate": "openapi-generator-cli generate -c ./openapi/config.yaml -i ./openapi/index.yaml -o ./src/genereted -g typescript-node",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yuto Hasegawa <hsgw@qstol.info>",
+  "license": "MIT",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "eov-handler-adapter": "^0.1.2",
+    "express": "^4.18.2",
+    "express-openapi-validator": "^5.0.6",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.7.0",
+    "@types/cookie-parser": "^1.4.6",
+    "@types/express": "^4.17.20",
+    "@types/js-yaml": "^4.0.8",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
